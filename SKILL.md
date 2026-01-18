@@ -1,11 +1,55 @@
 ---
 name: skill-wizard
-description: Interactive wizard for creating Claude Code skills through guided questions. Use when users want to create a new skill with step-by-step guidance, need help writing skill descriptions, want skill templates by type, or ask about skill creation workflow. Complements skill-creator with interactive approach.
+description: Complete guide for creating Claude Code skills through interactive wizard. Use when users want to create a new skill, update an existing skill, need help writing skill descriptions, want skill templates by type, or ask about skill creation workflow. Covers skill concepts, core principles, and step-by-step creation process.
+license: Apache-2.0
 ---
 
 # Skill Creation Wizard
 
-An interactive, question-driven approach to creating effective Claude Code skills.
+A complete, interactive guide for creating effective Claude Code skills.
+
+## About Skills
+
+Skills are modular, self-contained packages that extend Claude's capabilities by providing specialized knowledge, workflows, and tools. They transform Claude from a general-purpose agent into a specialized agent equipped with procedural knowledge.
+
+**What Skills Provide:**
+1. **Specialized workflows** - Multi-step procedures for specific domains
+2. **Tool integrations** - Instructions for working with specific file formats or APIs
+3. **Domain expertise** - Company-specific knowledge, schemas, business logic
+4. **Bundled resources** - Scripts, references, and assets for complex tasks
+
+## Core Principles
+
+### Concise is Key
+
+The context window is a public good. Skills share it with system prompt, conversation history, other skills' metadata, and user requests.
+
+**Default assumption: Claude is already very smart.** Only add context Claude doesn't have. Challenge each piece: "Does Claude really need this?" and "Does this justify its token cost?"
+
+Prefer concise examples over verbose explanations.
+
+### Set Appropriate Degrees of Freedom
+
+| Level | When to Use | Example |
+|-------|-------------|---------|
+| **High** (guidelines) | Multiple approaches valid | "Consider these factors when reviewing..." |
+| **Medium** (patterns) | Preferred method with flexibility | "Follow this pattern, adjust as needed..." |
+| **Low** (scripts) | Exact sequence required | "Run these commands in order..." |
+
+Think of Claude as exploring a path: narrow bridge needs guardrails (low freedom), open field allows many routes (high freedom).
+
+### Anatomy of a Skill
+
+```
+skill-name/
+├── SKILL.md (required)
+│   ├── YAML frontmatter (name, description)
+│   └── Markdown instructions
+└── Bundled Resources (optional)
+    ├── scripts/      - Executable code (Python/Bash)
+    ├── references/   - Documentation loaded as needed
+    └── assets/       - Files used in output (templates, icons)
+```
 
 ## When to Use This Wizard
 
@@ -125,6 +169,41 @@ Based on skill type, recommend:
 - **Workflow Orchestrator**: Sequential (Prerequisites → Phase 1 → Phase 2)
 - **Domain Expert**: Guidelines-based (Principles → Standards → Examples)
 
+### Progressive Disclosure Design
+
+Skills use a three-level loading system:
+
+1. **Metadata** (name + description) - Always in context (~100 words)
+2. **SKILL.md body** - When skill triggers (<5k words)
+3. **Bundled resources** - As needed by Claude (Unlimited)
+
+**Key guideline:** Keep SKILL.md body under 500 lines. Split content into reference files when approaching this limit.
+
+**Pattern 1: High-level guide with references**
+```markdown
+## Quick start
+[code example]
+
+## Advanced features
+- **Forms**: See [references/forms.md](references/forms.md)
+- **API**: See [references/api.md](references/api.md)
+```
+
+**Pattern 2: Domain-specific organization**
+```
+skill/
+├── SKILL.md (overview + navigation)
+└── references/
+    ├── finance.md
+    ├── sales.md
+    └── product.md
+```
+
+When user asks about sales, Claude only reads sales.md.
+
+For workflow patterns, see [references/workflows.md](references/workflows.md).
+For output patterns, see [references/output-patterns.md](references/output-patterns.md)
+
 ---
 
 ## Phase 5: Resource Planning
@@ -158,6 +237,16 @@ Examples:
 - Brand assets → `logo.png`
 - Document templates → `template.docx`
 
+### What NOT to Include
+
+A skill should only contain essential files. Do NOT create:
+- README.md
+- INSTALLATION_GUIDE.md
+- QUICK_REFERENCE.md
+- CHANGELOG.md
+
+The skill is for an AI agent to do the job. It should not contain auxiliary context about the creation process, setup procedures, or user-facing documentation. Additional docs just add clutter.
+
 ---
 
 ## Phase 6: Validation & Generation
@@ -184,27 +273,41 @@ Create 3 test cases (see [test-scenarios.md](references/test-scenarios.md)):
 
 ### Create the Skill
 
-Option A: Use existing `skill-creator` scripts
+**Step 1: Initialize**
 ```bash
-# Initialize from skill-creator
 python ~/.claude/skills/skill-creator/scripts/init_skill.py <skill-name> --path <location>
 ```
 
-Option B: Use wizard script for guided generation
+The script creates:
+- Skill directory at specified path
+- SKILL.md template with frontmatter and TODO placeholders
+- Example `scripts/`, `references/`, `assets/` directories
+
+**Step 2: Edit**
+- Update SKILL.md frontmatter (name, description)
+- Write instructions in SKILL.md body
+- Implement scripts (test them!)
+- Add reference documentation
+- Delete unused example files
+
+**Step 3: Test**
+- Run test scenarios (happy path, edge case, out of scope)
+- Verify skill triggers correctly
+- Check output quality
+
+**Step 4: Package**
 ```bash
-python ~/.claude/skills/skill-wizard/scripts/wizard.py
+python ~/.claude/skills/skill-creator/scripts/package_skill.py <skill-path>
 ```
 
-### Post-Generation
+The script:
+1. **Validates**: frontmatter, naming, structure, description quality
+2. **Packages**: creates `.skill` file (zip with .skill extension)
 
-1. Edit generated SKILL.md with planned content
-2. Implement identified scripts
-3. Add reference documentation
-4. Test with generated scenarios
-5. Package when ready:
-   ```bash
-   python ~/.claude/skills/skill-creator/scripts/package_skill.py <skill-path>
-   ```
+If validation fails, fix errors and run again.
+
+**Step 5: Iterate**
+After real usage, note struggles and improve SKILL.md or resources.
 
 ---
 
@@ -222,7 +325,15 @@ python ~/.claude/skills/skill-wizard/scripts/wizard.py
 
 ## Resources
 
+### References
 - **Description writing**: [references/description-guide.md](references/description-guide.md)
 - **Type templates**: [references/type-templates.md](references/type-templates.md)
 - **Test scenarios**: [references/test-scenarios.md](references/test-scenarios.md)
+- **Workflow patterns**: [references/workflows.md](references/workflows.md)
+- **Output patterns**: [references/output-patterns.md](references/output-patterns.md)
+
+### Scripts
 - **Wizard CLI**: [scripts/wizard.py](scripts/wizard.py)
+- **Test generator**: [scripts/generate_tests.py](scripts/generate_tests.py)
+- **Initialize skill**: `~/.claude/skills/skill-creator/scripts/init_skill.py`
+- **Package skill**: `~/.claude/skills/skill-creator/scripts/package_skill.py`
