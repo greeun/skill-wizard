@@ -1,7 +1,7 @@
 # Skill Wizard
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.txt)
 
 > Interactive wizard for creating Claude Code skills through guided questions.
 
@@ -95,11 +95,14 @@ python scripts/generate_tests.py \
 
 ```
 skill-wizard/
-├── SKILL.md                          # Main wizard guide
+├── SKILL.md                          # Main wizard guide (with skill-creator content)
+├── LICENSE.txt                       # Apache 2.0 license
 ├── references/
 │   ├── description-guide.md          # How to write effective descriptions
 │   ├── type-templates.md             # Templates for each skill type
-│   └── test-scenarios.md             # Test scenario writing guide
+│   ├── test-scenarios.md             # Test scenario writing guide
+│   ├── workflows.md                  # Sequential/conditional workflow patterns
+│   └── output-patterns.md            # Template/example output patterns
 └── scripts/
     ├── wizard.py                     # Interactive CLI wizard
     └── generate_tests.py             # Test scenario generator
@@ -144,6 +147,24 @@ Use together:
 
 - Claude Code CLI
 - Python 3.8+ (for scripts)
+- **skill-creator** (for `init_skill.py` and `package_skill.py`)
+
+### Installing skill-creator (Required Dependency)
+
+skill-wizard uses `init_skill.py` and `package_skill.py` from skill-creator. Install it first:
+
+```bash
+# Clone skill-creator to your Claude Code skills directory
+git clone https://github.com/anthropics/skill-creator.git ~/.claude/skills/skill-creator
+```
+
+Verify installation:
+```bash
+ls ~/.claude/skills/skill-creator/scripts/
+# Should show: init_skill.py  package_skill.py
+```
+
+> **Note**: Without skill-creator, you can still use skill-wizard for planning and design, but you'll need to manually create the skill directory structure.
 
 ## Contributing
 
@@ -151,7 +172,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+Apache License 2.0 - see [LICENSE.txt](LICENSE.txt) for details.
 
 ## Related
 

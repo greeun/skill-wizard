@@ -1,7 +1,7 @@
 # Skill Wizard
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Skill-blue)](https://claude.ai)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE.txt)
 
 > 대화형 질문을 통해 Claude Code 스킬을 생성하는 위저드
 
@@ -95,11 +95,14 @@ python scripts/generate_tests.py \
 
 ```
 skill-wizard/
-├── SKILL.md                          # 메인 위저드 가이드
+├── SKILL.md                          # 메인 위저드 가이드 (skill-creator 내용 포함)
+├── LICENSE.txt                       # Apache 2.0 라이선스
 ├── references/
 │   ├── description-guide.md          # 효과적인 설명 작성법
 │   ├── type-templates.md             # 유형별 템플릿
-│   └── test-scenarios.md             # 테스트 시나리오 작성 가이드
+│   ├── test-scenarios.md             # 테스트 시나리오 작성 가이드
+│   ├── workflows.md                  # 순차/조건부 워크플로우 패턴
+│   └── output-patterns.md            # 템플릿/예시 출력 패턴
 └── scripts/
     ├── wizard.py                     # 대화형 CLI 위저드
     └── generate_tests.py             # 테스트 시나리오 생성기
@@ -144,6 +147,24 @@ Skill Wizard는 기존 `skill-creator` 스킬을 보완합니다:
 
 - Claude Code CLI
 - Python 3.8+ (스크립트용)
+- **skill-creator** (`init_skill.py` 및 `package_skill.py` 사용)
+
+### skill-creator 설치 (필수 의존성)
+
+skill-wizard는 skill-creator의 `init_skill.py`와 `package_skill.py`를 사용합니다. 먼저 설치하세요:
+
+```bash
+# Claude Code 스킬 디렉토리에 skill-creator 클론
+git clone https://github.com/anthropics/skill-creator.git ~/.claude/skills/skill-creator
+```
+
+설치 확인:
+```bash
+ls ~/.claude/skills/skill-creator/scripts/
+# 출력: init_skill.py  package_skill.py
+```
+
+> **참고**: skill-creator가 없어도 skill-wizard로 계획 및 설계는 가능하지만, 스킬 디렉토리 구조를 수동으로 생성해야 합니다.
 
 ## 기여
 
@@ -151,7 +172,7 @@ Skill Wizard는 기존 `skill-creator` 스킬을 보완합니다:
 
 ## 라이선스
 
-MIT 라이선스 - 자세한 내용은 [LICENSE](LICENSE)를 참조하세요.
+Apache License 2.0 - 자세한 내용은 [LICENSE.txt](LICENSE.txt)를 참조하세요.
 
 ## 관련 링크
 
