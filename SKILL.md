@@ -2,6 +2,7 @@
 name: skill-wizard
 description: Complete guide for creating Claude Code skills through interactive wizard. Use when users want to create a new skill, update an existing skill, need help writing skill descriptions, want skill templates by type, or ask about skill creation workflow. Covers skill concepts, core principles, and step-by-step creation process.
 license: Apache-2.0
+version: 1.0.0
 ---
 
 # Skill Creation Wizard
@@ -274,14 +275,32 @@ Create 3 test cases (see [test-scenarios.md](references/test-scenarios.md)):
 ### Create the Skill
 
 **Step 1: Initialize**
+
+Use whichever of these is available (in order of preference):
+
 ```bash
+# (a) If skill-creator is installed, use its initializer:
 python ~/.claude/skills/skill-creator/scripts/init_skill.py <skill-name> --path <location>
+
+# (b) Otherwise, use this skill's bundled interactive wizard, which scaffolds
+#     the directory + SKILL.md for you:
+python "$(dirname "$0")/scripts/wizard.py"
 ```
 
-The script creates:
+Either creates:
 - Skill directory at specified path
 - SKILL.md template with frontmatter and TODO placeholders
-- Example `scripts/`, `references/`, `assets/` directories
+- `scripts/`, `references/`, (optionally `assets/`) directories
+
+**(c) Manual fallback** — if neither script is available, create the structure by hand:
+```bash
+mkdir -p <location>/<skill-name>/{scripts,references}
+# then create <location>/<skill-name>/SKILL.md with the frontmatter:
+#   ---
+#   name: <skill-name>
+#   description: <what it does + when to use (trigger keywords)>
+#   ---
+```
 
 **Step 2: Edit**
 - Update SKILL.md frontmatter (name, description)
@@ -295,8 +314,9 @@ The script creates:
 - Verify skill triggers correctly
 - Check output quality
 
-**Step 4: Package**
+**Step 4: Package** (optional — only if distributing the skill)
 ```bash
+# Requires skill-creator to be installed:
 python ~/.claude/skills/skill-creator/scripts/package_skill.py <skill-path>
 ```
 
@@ -304,7 +324,8 @@ The script:
 1. **Validates**: frontmatter, naming, structure, description quality
 2. **Packages**: creates `.skill` file (zip with .skill extension)
 
-If validation fails, fix errors and run again.
+If validation fails, fix errors and run again. If skill-creator is not installed,
+skip packaging — the skill still works once its folder is under `~/.claude/skills/`.
 
 **Step 5: Iterate**
 After real usage, note struggles and improve SKILL.md or resources.
@@ -333,7 +354,7 @@ After real usage, note struggles and improve SKILL.md or resources.
 - **Output patterns**: [references/output-patterns.md](references/output-patterns.md)
 
 ### Scripts
-- **Wizard CLI**: [scripts/wizard.py](scripts/wizard.py)
-- **Test generator**: [scripts/generate_tests.py](scripts/generate_tests.py)
-- **Initialize skill**: `~/.claude/skills/skill-creator/scripts/init_skill.py`
-- **Package skill**: `~/.claude/skills/skill-creator/scripts/package_skill.py`
+- **Wizard CLI** (bundled, scaffolds a skill interactively): [scripts/wizard.py](scripts/wizard.py)
+- **Test generator** (bundled): [scripts/generate_tests.py](scripts/generate_tests.py)
+- **Initialize skill** (optional, external — only if skill-creator installed): `~/.claude/skills/skill-creator/scripts/init_skill.py`
+- **Package skill** (optional, external — only if skill-creator installed): `~/.claude/skills/skill-creator/scripts/package_skill.py`

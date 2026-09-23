@@ -16,7 +16,6 @@ import re
 import argparse
 from pathlib import Path
 from typing import List, Dict, Tuple
-import yaml
 
 # Common synonyms for trigger word expansion
 SYNONYMS = {
@@ -216,6 +215,8 @@ def read_skill_description(skill_path: Path) -> Tuple[str, str]:
     if not match:
         raise ValueError("No YAML frontmatter found")
 
+    # Imported lazily so the --description path works without pyyaml installed.
+    import yaml
     frontmatter = yaml.safe_load(match.group(1))
 
     name = frontmatter.get('name', skill_path.name)
